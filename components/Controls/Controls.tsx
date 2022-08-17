@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "./styles.module.scss";
+import styles from "./Controls.module.scss";
 
 interface Props {
     loops: number[][] | [];
@@ -20,12 +20,14 @@ const Controls = ({
 
     return (
         <div className={styles.buttonContainer}>
-            <button
-                className={styles.startButton}
-                onClick={() => onStartClick(!gameStarted)}
-            >
-                Start
-            </button>
+            {!gameStarted && loops.length === 0 && (
+                <button
+                    className={styles.startButton}
+                    onClick={() => onStartClick(!gameStarted)}
+                >
+                    Start
+                </button>
+            )}
 
             {!gameStarted && loops.length > 0 && (
                 <button className={styles.startButton} onClick={reset}>

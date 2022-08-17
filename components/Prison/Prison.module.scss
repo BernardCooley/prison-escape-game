@@ -1,0 +1,47 @@
+.prisonContainer {
+    display: flex;
+    grid-gap: 4px;
+    margin: auto;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 34px;
+}
+
+.box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    flex-direction: column;
+    padding: 4px;
+    background-size: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px;
+    width: 80px;
+    aspect-ratio: 1/1;
+}
+
+.open {
+    background-image: url("../../public/assets/icons/open-box.png");
+}
+
+.closed {
+    justify-content: flex-end;
+    background-image: url("../../public/assets/icons/closed-box.png");
+}
+
+.number {
+    position: relative;
+    color: white;
+    font-size: 20px;
+}
+
+.paperNumber {
+    // bottom: -25px;
+    // z-index: 1;
+    // font-size: 18px;
+    // color: white;
+}

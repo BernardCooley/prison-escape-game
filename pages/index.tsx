@@ -4,41 +4,46 @@ import Controls from "../components/Controls/Controls";
 import Popup from "../components/Popup/Popup";
 import Prison from "../components/Prison/Prison";
 import Statistics from "../components/Statistics/Statistics";
-import styles from "../styles/Home.module.css";
-
-interface ISplicedLoop {
-    prisoner: number;
-    loop: number[];
-}
+import styles from "../styles/Home.module.scss";
+import { ISlicedLoop } from "../types";
 
 const Home: NextPage = () => {
     const [boxes, setBoxes] = useState<number[]>([]);
     const [gameStarted, setGameStarted] = useState<boolean>(false);
     const [gameCompleted, setGameCompleted] = useState<boolean>(false);
-    const numOfprisoners = 100;
+    const numOfprisoners = 50;
     const [loops, setLoops] = useState<number[][] | []>([]);
     const [failed, setFailed] = useState<boolean>(false);
     const [gamesPassed, setGamesPassed] = useState<number>(0);
     const [gamesFailed, setGamesFailed] = useState<number>(0);
+    const [slicedLoops, setSlicedLoops] = useState<ISlicedLoop[]>([]);
+    const [modalOpen, setModalOpen] = useState<boolean>(false);
 
     useEffect(() => {
         generatePrison();
     }, []);
 
     useEffect(() => {
+        if (gameCompleted) {
+            setModalOpen(true);
+        }
+    }, [gameCompleted]);
+
+    useEffect(() => {
         if (gameStarted) {
             let pri = 0;
             let loops: number[][] = [];
 
+            // Looping through prisoners
             for (let j = 0; j < numOfprisoners; j++) {
                 const newLoop: number[] = [];
                 let newCurrentBox = pri;
 
+                // Looping through boxes
                 for (let i = 0; i < numOfprisoners; i++) {
                     newLoop.push(boxes[newCurrentBox]);
                     newCurrentBox = boxes[newCurrentBox];
                 }
-
                 loops.push(newLoop);
                 pri++;
             }
@@ -51,7 +56,7 @@ const Home: NextPage = () => {
 
     useEffect(() => {
         if (gameCompleted) {
-            const slicedLoops: ISplicedLoop[] = [];
+            const slicedLoops: ISlicedLoop[] = [];
 
             loops.forEach((loop, index) => {
                 const slicedLoop = loop.slice(0, loop.indexOf(index) + 1);
@@ -59,8 +64,11 @@ const Home: NextPage = () => {
                 slicedLoops.push({
                     prisoner: index,
                     loop: slicedLoop,
+                    percentage: 0,
                 });
             });
+
+            setSlicedLoops(slicedLoops);
 
             const longest = Math.max(...slicedLoops.map((a) => a.loop.length));
 
@@ -94,6 +102,13 @@ const Home: NextPage = () => {
 
     return (
         <div className={styles.container}>
+            {modalOpen && (
+                <Popup
+                    onClose={() => setModalOpen(false)}
+                    slicedLoops={slicedLoops}
+                    failed={failed}
+                ></Popup>
+            )}
             <div className={styles.controlPanel}>
                 <Controls
                     gameStarted={gameStarted}
@@ -102,7 +117,6 @@ const Home: NextPage = () => {
                     onStartClick={() => setGameStarted(!gameStarted)}
                 ></Controls>
 
-                <Popup failed={failed} gameCompleted={gameCompleted}></Popup>
                 <Statistics
                     gamesFailed={gamesFailed}
                     gamesPassed={gamesPassed}
